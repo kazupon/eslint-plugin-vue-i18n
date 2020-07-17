@@ -14,6 +14,12 @@ const settings = {
   }
 }
 
+const settingLocales = {
+  'vue-i18n': {
+    locales: [{ name: 'en', messages: { hello: 'hello world' }}]
+  }
+}
+
 const tester = new RuleTester({
   parser: require.resolve('vue-eslint-parser'),
   parserOptions: { ecmaVersion: 2015 }
@@ -60,6 +66,10 @@ tester.run('no-missing-keys', rule, {
     code: `<template>
       <p v-t="'hello'"></p>
     </template>`
+  }, {
+    // using message settings
+    settings: settingLocales,
+    code: `$t('hello')`
   }],
 
   invalid: [{
@@ -106,7 +116,7 @@ tester.run('no-missing-keys', rule, {
     // settings.vue-i18n.localeDir' error
     code: `$t('missing')`,
     errors: [
-      `You need to set 'localeDir' at 'settings. See the 'eslint-plugin-vue-i18n documentation`
+      'You need to define locales in settings. See the eslint-plugin-vue-i18n documentation'
     ]
   }, {
     // nested basic
@@ -117,6 +127,13 @@ tester.run('no-missing-keys', rule, {
       `'missing.path' does not exist`,
       `'missing.path' does not exist`,
       `'missing.path' does not exist`
+    ]
+  }, {
+    // using message settings
+    settings: settingLocales,
+    code: `$t('missing')`,
+    errors: [
+      `'missing' does not exist`
     ]
   }]
 })
